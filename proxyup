@@ -1,0 +1,19 @@
+#!/bin/bash
+# based on ssh_tunnel by Richard K. Miller
+# http://richardkmiller.com/925/script-to-enabledisable-socks-proxy-on-mac-os-x
+disable_proxy()
+{
+        networksetup -setsocksfirewallproxystate Wi-Fi off
+        networksetup -setsocksfirewallproxystate Ethernet off
+        echo "SOCKS proxy disabled."
+}
+trap disable_proxy INT
+ 
+networksetup -setsocksfirewallproxy Wi-Fi 127.0.0.1 8000
+networksetup -setsocksfirewallproxy Ethernet 127.0.0.1 8000
+networksetup -setsocksfirewallproxystate Wi-Fi on
+networksetup -setsocksfirewallproxystate Ethernet on
+echo "SOCKS proxy enabled."
+echo "Tunneling..."
+ssh -D 8000 -N brevity@brevity.org
+
